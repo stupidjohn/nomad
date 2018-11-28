@@ -21,6 +21,7 @@ import (
 	"github.com/hashicorp/nomad/plugins/drivers"
 	"github.com/hashicorp/nomad/plugins/shared"
 	"github.com/hashicorp/nomad/plugins/shared/hclspec"
+	ptestutil "github.com/hashicorp/nomad/plugins/shared/testutil"
 	"github.com/hashicorp/nomad/testutil"
 	"github.com/stretchr/testify/require"
 )
@@ -486,6 +487,55 @@ func TestRawExecDriver_Exec(t *testing.T) {
 	require.Contains(string(res.Stdout), "No such file or directory")
 
 	require.NoError(harness.DestroyTask(task.ID, true))
+}
+
+func TestRawExecDriver_ParsingConfigWorks(t *testing.T) {
+	t.Run("valid config", func(t *testing.T) {
+
+		hcl := `config {
+	command = "/bin/bash"
+	args = ["-c", "echo hi"]
+}`
+
+		expected := TaskConfig{
+			Command: "/bin/bash",
+			Args:    []string{"-c", "echo hi"},
+		}
+
+		var driverConfig TaskConfig
+		err, diag := ptestutil.ParseTaskConfig(hcl, taskConfigSpec, &driverConfig)
+		require.NoError(t, err)
+		require.EqualValues(t, expected, driverConfig)
+		require.Empty(t, diag.Errs())
+	})
+
+	t.Run("invalid schema: wrong type", func(t *testing.T) {
+
+		hcl := `config {
+	command = ["/bin/bash"]
+}`
+
+		var driverConfig TaskConfig
+		err, diag := ptestutil.ParseTaskConfig(hcl, taskConfigSpec, &driverConfig)
+		expectedErr := `Inappropriate value for attribute "command": string required`
+		require.Error(t, err)
+		require.Contains(t, err.Error(), expectedErr)
+		require.NotEmpty(t, diag.Errs())
+		require.Contains(t, diag.Errs()[0].Error(), expectedErr)
+	})
+
+	t.Run("invalid schema: missing required", func(t *testing.T) {
+
+		hcl := `config {}`
+
+		var driverConfig TaskConfig
+		err, diag := ptestutil.ParseTaskConfig(hcl, taskConfigSpec, &driverConfig)
+		expectedErr := `The argument "command" is required, but no definition was found`
+		require.Error(t, err)
+		require.Contains(t, err.Error(), expectedErr)
+		require.NotEmpty(t, diag.Errs())
+		require.Contains(t, diag.Errs()[0].Error(), expectedErr)
+	})
 }
 
 func encodeDriverHelper(require *require.Assertions, task *drivers.TaskConfig, taskConfig map[string]interface{}) {
