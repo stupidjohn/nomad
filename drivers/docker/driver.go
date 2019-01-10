@@ -1128,8 +1128,6 @@ func (d *Driver) ExecTask(taskID string, cmd []string, timeout time.Duration) (*
 	return h.Exec(ctx, cmd[0], cmd[1:])
 }
 
-type dockerClientsFn func() (*docker.Client, *docker.Client, error)
-
 // dockerClients creates two *docker.Client, one for long running operations and
 // the other for shorter operations. In test / dev mode we can use ENV vars to
 // connect to the docker daemon. In production mode we will read docker.endpoint

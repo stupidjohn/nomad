@@ -237,7 +237,7 @@ type TaskResourceUsage struct {
 	Timestamp     int64 // UnixNano
 	Pids          map[string]*ResourceUsage
 
-	// Err is set by the driver if an error occured during an RPC stream
+	// Err is set by the driver if an error occurred during an RPC stream
 	Err error
 }
 

@@ -121,7 +121,7 @@ func (c *grpcExecutorClient) handleStats(ctx context.Context, stream proto.Execu
 		resp, err := stream.Recv()
 		if err != nil {
 			if err != io.EOF {
-				c.logger.Error("error recieving stream from Stats executor RPC", "error", err)
+				c.logger.Error("error receiving stream from Stats executor RPC", "error", err)
 				truErr := &cstructs.TaskResourceUsage{
 					Err: grpcutils.HandleReqCtxGrpcErr(err, ctx, c.doneCtx),
 				}

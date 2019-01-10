@@ -54,7 +54,7 @@ func (h *taskHandle) collectStats(ctx context.Context, ch chan *cstructs.TaskRes
 			}
 		}
 		// make a channel for docker stats structs and start a collector to
-		// recieve stats from docker and emit nomad stats
+		// receive stats from docker and emit nomad stats
 		// statsCh will always be closed by docker client.
 		statsCh := make(chan *docker.Stats)
 		go h.collector(ch, statsCh, interval)
@@ -67,9 +67,9 @@ func (h *taskHandle) collectStats(ctx context.Context, ch chan *cstructs.TaskRes
 			Stream:  true,
 		}
 
-		// Stats blocks until an error has occured, or doneCh has been closed
+		// Stats blocks until an error has occurred, or doneCh has been closed
 		if err := h.client.Stats(statsOpts); err != nil && err != io.ErrClosedPipe {
-			// An error occured during stats collection, retry with backoff
+			// An error occurred during stats collection, retry with backoff
 			h.logger.Debug("error collecting stats from container", "error", err)
 
 			// Calculate the new backoff
@@ -89,7 +89,7 @@ func (h *taskHandle) collectStats(ctx context.Context, ch chan *cstructs.TaskRes
 func (h *taskHandle) collector(destCh chan *cstructs.TaskResourceUsage, statsCh <-chan *docker.Stats, interval time.Duration) {
 	var resourceUsage *cstructs.TaskResourceUsage
 
-	// hasSentInitialStats is used so as to emit the first stats recieved from
+	// hasSentInitialStats is used so as to emit the first stats received from
 	// the docker daemon
 	var hasSentInitialStats bool
 

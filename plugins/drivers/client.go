@@ -285,7 +285,7 @@ func (d *driverPluginClient) handleStats(ctx context.Context, ch chan<- *cstruct
 		resp, err := stream.Recv()
 		if err != nil {
 			if err != io.EOF {
-				d.logger.Error("error recieving stream from TaskStats driver RPC", "error", err)
+				d.logger.Error("error receiving stream from TaskStats driver RPC", "error", err)
 				truErr := &cstructs.TaskResourceUsage{
 					Err: grpcutils.HandleReqCtxGrpcErr(err, ctx, d.doneCtx),
 				}
