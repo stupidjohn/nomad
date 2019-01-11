@@ -92,8 +92,6 @@ func (s *grpcExecutorServer) Version(context.Context, *proto.VersionRequest) (*p
 }
 
 func (s *grpcExecutorServer) Stats(req *proto.StatsRequest, stream proto.Executor_StatsServer) error {
-	ctx := stream.Context()
-
 	interval := time.Duration(req.Interval)
 	if interval == 0 {
 		interval = time.Second
