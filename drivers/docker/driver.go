@@ -84,6 +84,10 @@ type Driver struct {
 
 	// logger will log to the Nomad agent
 	logger hclog.Logger
+
+	// hasFingerprinted is used to store whether we have fingerprinted before
+	hasFingerprinted bool
+	fingerprintLock  sync.Mutex
 }
 
 // NewDockerDriver returns a docker implementation of a driver plugin
