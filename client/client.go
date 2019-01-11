@@ -1984,9 +1984,14 @@ func makeFailedAlloc(add *structs.Allocation, err error) *structs.Allocation {
 	}
 
 	failTime := time.Now()
-	stripped.DeploymentStatus = &structs.AllocDeploymentStatus{
-		Healthy:   helper.BoolToPtr(false),
-		Timestamp: failTime,
+	if add.DeploymentStatus.HasHealth() {
+		// Never change deployment health once it has been set
+		stripped.DeploymentStatus = add.DeploymentStatus.Copy()
+	} else {
+		stripped.DeploymentStatus = &structs.AllocDeploymentStatus{
+			Healthy:   helper.BoolToPtr(false),
+			Timestamp: failTime,
+		}
 	}
 
 	taskGroup := add.Job.LookupTaskGroup(add.TaskGroup)
