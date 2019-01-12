@@ -201,8 +201,8 @@ func TestExecutor_WaitExitSignal(pt *testing.T) {
 					}
 					return true, nil
 				}, func(err error) {
+					assert.NoError(t, executor.Signal(os.Kill))
 					assert.NoError(t, err)
-					executor.Shutdown("SIGINT", 0)
 				})
 			}()
 
